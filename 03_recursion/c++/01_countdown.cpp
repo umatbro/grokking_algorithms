@@ -6,9 +6,10 @@ using std::endl;
 void countdown(const int& i) {
     cout << i << endl;
     
-    if (i <= 0) {
-        return;
-    }
+    // base case
+    if (i <= 0) return;\
+    
+    // recursive case
     countdown(i - 1);
 }
 
