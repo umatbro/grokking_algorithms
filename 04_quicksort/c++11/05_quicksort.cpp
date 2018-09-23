@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <ctime>
 #include <cstdlib>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -34,37 +35,35 @@ std::vector<T> quicksort(const std::vector<T>& arr) {
     return sorted_less;
 }
 
-
-// reference: http://www.algolist.net/Algorithms/Sorting/Quicksort
 template <typename T>
 void __quicksort_inplace(T* begin, T* end) {
     T* left = begin;
     T* right = end;
+
     int arr_length = end - begin;
-    if (arr_length < 3) return;
-    T* pivot =  begin + std::rand() % arr_length;
-    printf("Pivot: %d\n", *pivot);
-    printf("Array length: %d\n", arr_length); 
+    printf("ARRLEN %d\n", arr_length);
+
+    if (arr_length <= 1) 
+        return;
+    
+    // get random pivot
+    T pivot_val =  *(begin + std::rand() % (arr_length));
+    
     while (left <= right) {
-        while (*left < *pivot) {
-            printf("Left (%d) lt pivot (%d), increment\n", *left, *pivot);
+        while (*left < pivot_val) {
             left++;
         }
-        while (*right > *pivot) {
-            printf("Right (%d) gt pivot (%d), decrementing\n", *right, *pivot);
+        while (*right > pivot_val) {
             right--;
         }
-        if (left <= right) {
-            // printf("Swapping\n");
-            T tmp = *left;
-            *left = *right;
-            *right = tmp;
-            // left++;
-            // right++;
-        }
-        __quicksort_inplace(begin, left);
-        __quicksort_inplace(right, end);
+        std::swap(*left, *right);
+                
+        left++;
+        right--;   
     }
+
+    __quicksort_inplace(begin, left-1);
+    __quicksort_inplace(right+1, end);
 }
 
 template <typename T>
@@ -78,8 +77,8 @@ void quicksort_inplace(std::vector<T>& arr) {
 int main() {
     std::srand(std::time(nullptr)); // use current time as seed for random generator
     
-    std::vector<int> arr = {1, 2, 7, 8, 3, 4, 10};
-    // std::vector<int> arr = {69, 60, 38, 82, 99, 15, 8, 94, 30, 42, 35, 40, 63, 1, 49, 66, 93, 83, 20, 32, 87, 6, 78, 17, 2, 61, 91, 25, 7, 4, 97, 31, 23, 67, 95, 47, 55, 92, 37, 59, 73, 81, 74, 41, 39};
+    // std::vector<int> arr = {1, 2, 7, 8, 3, 4, 10};
+    std::vector<int> arr = {69, 60, 38, 82, 99, 15, 8, 94, 30, 42, 35, 40, 63, 1, 49, 66, 93, 83, 20, 32, 87, 6, 78, 17, 2, 61, 91, 25, 7, 4, 97, 31, 23, 67, 95, 47, 55, 92, 37, 59, 73, 81, 74, 41, 39};
     // std::vector<int> sorted = quicksort(arr);
     // for (int num : sorted) {
     //     cout << num << " ";
@@ -90,4 +89,11 @@ int main() {
         cout << num << " ";
     }
     cout << endl;
+    int prev_value = 0;
+    for (int i=0; i < arr.size(); i++ ) {
+        if (arr[i] < prev_value) {
+            printf("ERROR: %d\n", arr[i]);
+        }
+        prev_value = arr[i];
+    }
 }
